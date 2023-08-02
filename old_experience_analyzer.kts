@@ -52,7 +52,7 @@ persistentDirectory.walk().forEach { file ->
 
 // print
 val sortedExperienceMap = experienceMap.entries.sortedBy { it.value }.reversed()
-println(sortedExperienceMap.joinToString(transform = { "${it.key}: ${it.value}" }, separator = "\n"))
+// println(sortedExperienceMap.joinToString(transform = { "${it.key}: ${it.value}" }, separator = "\n"))
 
 // write to file
 println("Writing to file")
