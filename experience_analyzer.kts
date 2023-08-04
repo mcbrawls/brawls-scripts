@@ -5,21 +5,28 @@ import java.io.File
 import java.net.URI
 import java.nio.file.Path
 import java.util.UUID
+import kotlin.math.exp
 
 // setup
 
-println("Analyzing old experience files...")
+println("Analyzing experience files...")
 
 val playerDataDirectory = Path.of("player_data").toFile()
-val persistentDirectory: File = playerDataDirectory.resolve("persistent")
+val persistentDirectory: File = playerDataDirectory.resolve("experience")
 
 val usercacheFile = Path.of("usercache.json").toFile()
 val usercacheJson = usercacheFile.reader().use(JsonParser::parseReader).asJsonObject
 
-val experienceMap = mutableMapOf<String, Int>()
+data class ExperienceData(
+    val totalExperience: Int,
+    val levelExperience: Int,
+    val level: Int
+)
+
+val experienceMap = mutableMapOf<String, ExperienceData>()
 
 // create map
-println("Walking persistent directory")
+println("Walking experience directory")
 
 persistentDirectory.walk().forEach { file ->
     try {
@@ -44,23 +51,22 @@ persistentDirectory.walk().forEach { file ->
             }
 
         val json = file.reader().use(JsonParser::parseReader) as JsonObject
-        val experience = json["experience"].asInt
-        experienceMap[name] = (experienceMap[name] ?: 0) + experience
+        val experience = ExperienceData(json["total_experience"].asInt, json["level_experience"].asInt, json["level"].asInt + 1)
+        experienceMap[name] = experience
     } catch (_: Exception) {
     }
 }
 
 // print
-val sortedExperienceMap = experienceMap.entries.sortedBy { it.value }.reversed()
-// println(sortedExperienceMap.joinToString(transform = { "${it.key}: ${it.value}" }, separator = "\n"))
+val sortedExperienceMap = experienceMap.entries.sortedBy { it.value.totalExperience }.reversed()
 
 // write to file
 println("Writing to file")
 
 val statsCsvFile = playerDataDirectory.resolve("experience-statistics.csv")
 statsCsvFile.writeText(buildString {
-    appendLine("Username,Experience,Level")
-    sortedExperienceMap.forEach { (username, experience) -> appendLine("$username,$experience,${experience / 100}") }
+    appendLine("Username,Total Experience,Level Experience,Level")
+    sortedExperienceMap.forEach { (username, experience) -> appendLine("$username,${experience.totalExperience},${experience.levelExperience},${experience.level}") }
 })
 
 println("Written to file")
