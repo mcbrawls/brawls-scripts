@@ -5,7 +5,6 @@ import java.io.File
 import java.net.URI
 import java.nio.file.Path
 import java.util.UUID
-import kotlin.math.exp
 
 // setup
 
@@ -15,7 +14,17 @@ val playerDataDirectory = Path.of("player_data").toFile()
 val persistentDirectory: File = playerDataDirectory.resolve("experience")
 
 val usercacheFile = Path.of("usercache.json").toFile()
-val usercacheJson = usercacheFile.reader().use(JsonParser::parseReader).asJsonObject
+
+fun parseUsercacheJson(): JsonObject {
+    return try {
+        usercacheFile.reader().use(JsonParser::parseReader).asJsonObject
+    } catch (exception: Exception) {
+        exception.printStackTrace()
+        usercacheFile.writeText("{}")
+        parseUsercacheJson()
+    }
+}
+val usercacheJson = parseUsercacheJson()
 
 data class ExperienceData(
     val totalExperience: Int,
@@ -28,7 +37,9 @@ val experienceMap = mutableMapOf<String, ExperienceData>()
 // create map
 println("Walking experience directory")
 
-persistentDirectory.walk().forEach { file ->
+val files: Array<File> = persistentDirectory.listFiles()!!
+val size = files.size
+files.forEachIndexed { index, file ->
     try {
         val uuid: String = UUID.fromString(file.nameWithoutExtension).toString()
         val name =
@@ -41,7 +52,7 @@ persistentDirectory.walk().forEach { file ->
                     val lookup = URI("https://playerdb.co/api/player/minecraft/$uuid").toURL().readText()
                     val lookupJson = JsonParser.parseString(lookup) as JsonObject
                     val name = lookupJson["data"].asJsonObject["player"].asJsonObject["username"].asString
-                    println("Fetched username of $uuid as $name")
+                    println("Fetched username of $uuid as $name ($index/$size)")
                     usercacheJson.addProperty(uuid, name)
                     usercacheFile.writeText(Gson().toJson(usercacheJson))
                     name
