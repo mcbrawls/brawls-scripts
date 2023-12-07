@@ -86,7 +86,7 @@ files.forEachIndexed { index, file ->
         val timeRemaining = (runningAverageMs * remaining) / 1000
 
         if (timeRemaining != 0L) {
-            println("Time remaining: ${timeRemaining}s")
+            println("Time remaining: ${timeRemaining / 60}m ${timeRemaining % 60}s")
         }
     }
 }
