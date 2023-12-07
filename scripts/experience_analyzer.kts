@@ -1,6 +1,6 @@
 package scripts
 
-import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import java.io.File
@@ -22,7 +22,6 @@ fun parseUsercacheJson(): JsonObject {
     return try {
         usercacheFile.reader().use(JsonParser::parseReader).asJsonObject
     } catch (exception: Exception) {
-        exception.printStackTrace()
         usercacheFile.writeText("{}")
         parseUsercacheJson()
     }
@@ -59,7 +58,7 @@ files.forEachIndexed { index, file ->
                         val name = lookupJson["data"].asJsonObject["player"].asJsonObject["username"].asString
                         println("Fetched username of $uuid as $name ($index/$size)")
                         usercacheJson.addProperty(uuid, name)
-                        usercacheFile.writeText(Gson().toJson(usercacheJson))
+                        usercacheFile.writeText(GsonBuilder().setPrettyPrinting().create().toJson(usercacheJson))
                         name
                     } catch (_: Exception) {
                         "Unknown"
@@ -87,6 +86,7 @@ files.forEachIndexed { index, file ->
 
         if (timeRemaining != 0L) {
             println("Time remaining: ${timeRemaining / 60}m ${timeRemaining % 60}s")
+            runningAverageMs = -1
         }
     }
 }
