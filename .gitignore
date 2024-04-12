@@ -112,6 +112,8 @@ gradle-app.setting
 run/
 player_data/
 usercache.json
+uuids.txt
+uuids_out.txt
 
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
