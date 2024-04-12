@@ -12,7 +12,7 @@ import java.util.UUID
 
 println("Analyzing old experience files...")
 
-val playerDataDirectory = Path.of("player_data").toFile()
+val playerDataDirectory = Path.of("data").toFile()
 val persistentDirectory: File = playerDataDirectory.resolve("persistent")
 
 val usercacheFile = Path.of("usercache.json").toFile()

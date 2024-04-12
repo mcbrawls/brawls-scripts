@@ -13,7 +13,7 @@ import kotlin.time.measureTimedValue
 
 println("Analyzing experience files...")
 
-val playerDataDirectory = Path.of("player_data").toFile()
+val playerDataDirectory = Path.of("data").toFile()
 val experienceDirectory: File = playerDataDirectory.resolve("experience")
 
 val usercacheFile = Path.of("usercache.json").toFile()

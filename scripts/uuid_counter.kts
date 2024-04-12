@@ -1,4 +1,3 @@
-import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import java.net.URI
@@ -7,7 +6,7 @@ import java.util.UUID
 import kotlin.io.path.readLines
 import kotlin.io.path.writeText
 
-val file: Path = Path.of("player_data/del.csv")
+val file: Path = Path.of("data/uuids.txt")
 val lines = file.readLines()
 val uuids = lines.map {
     try {
@@ -46,4 +45,4 @@ val csv = buildString {
     }
 }
 
-Path.of("player_data/delout.csv").writeText(csv)
+Path.of("data/uuids_out.csv").writeText(csv)
